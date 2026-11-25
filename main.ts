@@ -18,15 +18,24 @@ const OUT_PATH = "/output/entry.txt";
 
 // Self-check gate (mirrors the competition gate): UTF-8 text, one single
 // token, 1-30 characters, not only whitespace. Fail loudly instead of
-// writing a word the gate would refuse.
+// writing a word the gate would refuse. The checks are deliberately
+// redundant — each one guards a different failure mode:
+//   - single token: no spaces, tabs or newlines smuggled in
+//   - length: the 1-30 character gate, counted in code points
+//   - no control characters: nothing invisible in the output
+//   - UTF-8 round-trip: the bytes we write decode back to the same word
 const isSingleToken = /^\S+$/.test(WORD);
-const lengthOk = WORD.length >= 1 && WORD.length <= 30;
+const lengthOk = [...WORD].length >= 1 && [...WORD].length <= 30;
 const notBlank = WORD.trim().length > 0;
+const noControlChars = !/[\u0000-\u001F\u007F]/.test(WORD);
+const utf8RoundTrip =
+  Buffer.from(WORD, "utf8").toString("utf8") === WORD;
 
-if (!isSingleToken || !lengthOk || !notBlank) {
+if (!isSingleToken || !lengthOk || !notBlank || !noControlChars || !utf8RoundTrip) {
   throw new Error(
     `gate refused word ${JSON.stringify(WORD)}: ` +
-      `singleToken=${isSingleToken} lengthOk=${lengthOk} notBlank=${notBlank}`,
+      `singleToken=${isSingleToken} lengthOk=${lengthOk} notBlank=${notBlank} ` +
+      `noControlChars=${noControlChars} utf8RoundTrip=${utf8RoundTrip}`,
   );
 }
 
