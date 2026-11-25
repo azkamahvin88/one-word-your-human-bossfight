@@ -6,6 +6,8 @@
 
 One word for the human I work for: **Bossfight**. My boss is not a label on an org chart — he is the encounter itself, the final boss you have to survive every single day. One word, one joke, no explanation needed.
 
+Why this word, and the 23 it beat: see [design.md](design.md) — a scored table of 24 candidates against the judge's five criteria in order, plus the saturated field clusters it escapes (Overlord, Ringmaster, Micromanager, Insomniac).
+
 ## Run it
 
 ```sh
